@@ -11,13 +11,13 @@ import (
 const sscc96_header = 0x31
 
 var sscc96_partition = [7][2]partition.Partition{
-	{{Start: 13, Length: 40, Digits: 12}, {Start: 53, Length: 18, Digits: 5}},
-	{{Start: 13, Length: 37, Digits: 11}, {Start: 50, Length: 21, Digits: 6}},
-	{{Start: 13, Length: 34, Digits: 10}, {Start: 47, Length: 24, Digits: 7}},
-	{{Start: 13, Length: 30, Digits: 9}, {Start: 43, Length: 28, Digits: 8}},
-	{{Start: 13, Length: 27, Digits: 8}, {Start: 40, Length: 31, Digits: 9}},
-	{{Start: 13, Length: 24, Digits: 7}, {Start: 37, Length: 34, Digits: 10}},
-	{{Start: 13, Length: 20, Digits: 6}, {Start: 33, Length: 38, Digits: 11}},
+	{{Start: 14, Length: 40, Digits: 12}, {Start: 54, Length: 18, Digits: 5}},
+	{{Start: 14, Length: 37, Digits: 11}, {Start: 51, Length: 21, Digits: 6}},
+	{{Start: 14, Length: 34, Digits: 10}, {Start: 48, Length: 24, Digits: 7}},
+	{{Start: 14, Length: 30, Digits: 9}, {Start: 44, Length: 28, Digits: 8}},
+	{{Start: 14, Length: 27, Digits: 8}, {Start: 41, Length: 31, Digits: 9}},
+	{{Start: 14, Length: 24, Digits: 7}, {Start: 38, Length: 34, Digits: 10}},
+	{{Start: 14, Length: 20, Digits: 6}, {Start: 34, Length: 38, Digits: 11}},
 }
 
 type SSCC96 struct {
@@ -37,11 +37,11 @@ func (sscc SSCC96) ToPureIdentityURI() string {
 }
 
 func sscc69FromByes(epcBytes []byte) (SSCC96, error) {
-	partitionNumber, err := utils.GetInt64FromBytes(epcBytes, partition.Partition{Start: 10, Length: 3, Digits: 3})
+	partitionNumber, err := utils.GetInt64FromBytes(epcBytes, partition.Partition{Start: 11, Length: 3, Digits: 3})
 	if err != nil {
 		return SSCC96{}, err
 	}
-	filter, err := utils.GetInt64FromBytes(epcBytes, partition.Partition{Start: 7, Length: 3, Digits: 3})
+	filter, err := utils.GetInt64FromBytes(epcBytes, partition.Partition{Start: 8, Length: 3, Digits: 3})
 	if err != nil {
 		return SSCC96{}, err
 	}
