@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/mzeiher/epctds/pkg/partition"
-	"github.com/mzeiher/epctds/pkg/utils"
+	"github.com/mzeiher/epctds-go/pkg/partition"
+	"github.com/mzeiher/epctds-go/pkg/utils"
 )
 
 const sscc96_header = 0x31

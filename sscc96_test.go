@@ -3,7 +3,7 @@ package epctds
 import (
 	"testing"
 
-	"github.com/mzeiher/epctds/pkg/utils"
+	"github.com/mzeiher/epctds-go/pkg/utils"
 )
 
 func TestSSCC96Parsing(t *testing.T) {

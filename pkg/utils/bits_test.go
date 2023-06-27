@@ -3,7 +3,7 @@ package utils
 import (
 	"testing"
 
-	"github.com/mzeiher/epctds/pkg/partition"
+	"github.com/mzeiher/epctds-go/pkg/partition"
 )
 
 func TestBitPartitioning(t *testing.T) {

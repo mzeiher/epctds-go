@@ -3,7 +3,7 @@ package utils
 import (
 	"errors"
 
-	"github.com/mzeiher/epctds/pkg/partition"
+	"github.com/mzeiher/epctds-go/pkg/partition"
 )
 
 var (
