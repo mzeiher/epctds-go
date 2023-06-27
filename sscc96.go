@@ -24,14 +24,16 @@ type SSCC96 struct {
 	EPCTag
 	CompanyPrefix int64
 	Serial        int64
-	Filter        int64
+
+	filter    int64
+	partition int64
 }
 
 func (sscc SSCC96) ToTagURI() string {
-	return fmt.Sprintf("urn:epc:tag:sscc-96:%d.%d.%d", sscc.Filter, sscc.CompanyPrefix, sscc.Serial)
+	return fmt.Sprintf("urn:epc:tag:sscc-96:%d.%0*d.%0*d", sscc.filter, sscc96_partition[sscc.partition][0].Digits, sscc.CompanyPrefix, sscc96_partition[sscc.partition][1].Digits, sscc.Serial)
 }
 func (sscc SSCC96) ToPureIdentityURI() string {
-	return fmt.Sprintf("urn:epc:tag:sscc:%d.%d", sscc.CompanyPrefix, sscc.Serial)
+	return fmt.Sprintf("urn:epc:id:sscc:%0*d.%0*d", sscc96_partition[sscc.partition][0].Digits, sscc.CompanyPrefix, sscc96_partition[sscc.partition][1].Digits, sscc.Serial)
 }
 
 func sscc69FromByes(epcBytes []byte) (SSCC96, error) {
@@ -54,5 +56,5 @@ func sscc69FromByes(epcBytes []byte) (SSCC96, error) {
 	if err != nil {
 		return SSCC96{}, err
 	}
-	return SSCC96{CompanyPrefix: companyPrefix, Serial: serial, Filter: filter}, nil
+	return SSCC96{CompanyPrefix: companyPrefix, Serial: serial, filter: filter, partition: partitionNumber}, nil
 }

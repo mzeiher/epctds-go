@@ -16,6 +16,27 @@ func TestSSCC96Parsing(t *testing.T) {
 	testSscc96(t, "3100DA7557D32C38E7000000", 234567890123, 14567)
 }
 
+func TestSSC96Serialization(t *testing.T) {
+	expectedPureIdentityUri := "urn:epc:id:sscc:0001000.0000000100"
+	expectedTagUri := "urn:epc:tag:sscc-96:0.0001000.0000000100"
+
+	epcBytes, err := utils.GetEpcBytes("3114000FA000000064000000")
+	if err != nil {
+		t.Fatal(err)
+	}
+	sscc96, err := sscc69FromByes(epcBytes)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if expectedPureIdentityUri != sscc96.ToPureIdentityURI() {
+		t.Fatalf("invalid pure identity URI: expected: %s, got: %s", expectedPureIdentityUri, sscc96.ToPureIdentityURI())
+	}
+	if expectedTagUri != sscc96.ToTagURI() {
+		t.Fatalf("invalid tag URI: expected: %s, got: %s", expectedTagUri, sscc96.ToTagURI())
+	}
+
+}
+
 func testSscc96(t *testing.T, epcString string, expectedCompanyPrefix int64, expectedSerial int64) {
 	epcBytes, err := utils.GetEpcBytes(epcString)
 	if err != nil {
