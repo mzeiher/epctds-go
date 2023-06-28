@@ -2,7 +2,7 @@
 This library helps with the handling of epc tags. 
 It is possible to parse and create the hex representation you usually get from barcodes or RFID tags.
 
-currently supported are sscc-96 tags, but more will follow ;)
+currently supported are sscc-96 and sgln-96 tags, but more will follow ;)
 
 Installation
 ```bash
@@ -24,6 +24,8 @@ func main() {
         panic(err)
     }
     switch tag.(type) {
+    case epctds.SGLN96:
+        // do something
     case epctds.SSCC96:
         // do something
     }

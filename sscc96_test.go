@@ -16,7 +16,21 @@ func TestSSCC96Parsing(t *testing.T) {
 	testSscc96(t, "3100DA7557D32C38E7000000", 234567890123, 14567)
 }
 
-func TestSSC96Serialization(t *testing.T) {
+func testSscc96(t *testing.T, epcString string, expectedCompanyPrefix int64, expectedSerial int64) {
+	epcBytes, err := utils.GetEpcBytes(epcString)
+	if err != nil {
+		t.Fatal(err)
+	}
+	sscc96, err := sscc96FromBytes(epcBytes)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if sscc96.CompanyPrefix != expectedCompanyPrefix && sscc96.Serial != expectedSerial {
+		t.Fatalf("invalid values")
+	}
+}
+
+func TestSSCC96Serialization(t *testing.T) {
 	expectedPureIdentityUri := "urn:epc:id:sscc:0001000.0000000100"
 	expectedTagUri := "urn:epc:tag:sscc-96:0.0001000.0000000100"
 	hexString := "3114000FA000000064000000"
@@ -25,7 +39,7 @@ func TestSSC96Serialization(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	sscc96, err := sscc69FromBytes(epcBytes)
+	sscc96, err := sscc96FromBytes(epcBytes)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -44,26 +58,12 @@ func TestSSC96Serialization(t *testing.T) {
 	}
 }
 
-func testSscc96(t *testing.T, epcString string, expectedCompanyPrefix int64, expectedSerial int64) {
-	epcBytes, err := utils.GetEpcBytes(epcString)
-	if err != nil {
-		t.Fatal(err)
-	}
-	sscc96, err := sscc69FromBytes(epcBytes)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if sscc96.CompanyPrefix != expectedCompanyPrefix && sscc96.Serial != expectedSerial {
-		t.Fatalf("invalid values")
-	}
-}
-
 func BenchmarkSSCC96Parsing(b *testing.B) {
 	epcBytes, err := utils.GetEpcBytes("3118E511C46699F387000000")
 	if err != nil {
 		b.Fatal(err)
 	}
 	for i := 0; i < b.N; i++ {
-		sscc69FromBytes(epcBytes)
+		sscc96FromBytes(epcBytes)
 	}
 }

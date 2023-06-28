@@ -10,19 +10,20 @@ import (
 
 const SSCC96Header = 0x31
 
-var ssc96_headerPartition = partition.Partition{Start: 0, Length: 8, Digits: 5}
-var ssc96_partitionNumberPartition = partition.Partition{Start: 11, Length: 3, Digits: 3}
-var ssc96_filterPartition = partition.Partition{Start: 8, Length: 3, Digits: 3}
-
-var sscc96_partition = [7][2]partition.Partition{
-	{{Start: 14, Length: 40, Digits: 12}, {Start: 54, Length: 18, Digits: 5}},
-	{{Start: 14, Length: 37, Digits: 11}, {Start: 51, Length: 21, Digits: 6}},
-	{{Start: 14, Length: 34, Digits: 10}, {Start: 48, Length: 24, Digits: 7}},
-	{{Start: 14, Length: 30, Digits: 9}, {Start: 44, Length: 28, Digits: 8}},
-	{{Start: 14, Length: 27, Digits: 8}, {Start: 41, Length: 31, Digits: 9}},
-	{{Start: 14, Length: 24, Digits: 7}, {Start: 38, Length: 34, Digits: 10}},
-	{{Start: 14, Length: 20, Digits: 6}, {Start: 34, Length: 38, Digits: 11}},
-}
+var (
+	sscc96_headerPartition          = partition.Partition{Start: 0, Length: 8, Digits: 5}
+	sscc96_partitionNumberPartition = partition.Partition{Start: 11, Length: 3, Digits: 1}
+	sscc96_filterPartition          = partition.Partition{Start: 8, Length: 3, Digits: 1}
+	sscc96_partition                = [7][2]partition.Partition{
+		{{Start: 14, Length: 40, Digits: 12}, {Start: 54, Length: 18, Digits: 5}},
+		{{Start: 14, Length: 37, Digits: 11}, {Start: 51, Length: 21, Digits: 6}},
+		{{Start: 14, Length: 34, Digits: 10}, {Start: 48, Length: 24, Digits: 7}},
+		{{Start: 14, Length: 30, Digits: 9}, {Start: 44, Length: 28, Digits: 8}},
+		{{Start: 14, Length: 27, Digits: 8}, {Start: 41, Length: 31, Digits: 9}},
+		{{Start: 14, Length: 24, Digits: 7}, {Start: 38, Length: 34, Digits: 10}},
+		{{Start: 14, Length: 20, Digits: 6}, {Start: 34, Length: 38, Digits: 11}},
+	}
+)
 
 type SSCC96 struct {
 	EPCTag
@@ -41,15 +42,15 @@ func (sscc SSCC96) ToPureIdentityURI() string {
 }
 func (sscc SSCC96) ToHex() (string, error) {
 	sscc96Bytes := make([]byte, 12)
-	sscc96Bytes, err := utils.PutInt64InBytes(SSCC96Header, sscc96Bytes, ssc96_headerPartition)
+	sscc96Bytes, err := utils.PutInt64InBytes(SSCC96Header, sscc96Bytes, sscc96_headerPartition)
 	if err != nil {
 		return "", err
 	}
-	sscc96Bytes, err = utils.PutInt64InBytes(sscc.filter, sscc96Bytes, ssc96_filterPartition)
+	sscc96Bytes, err = utils.PutInt64InBytes(sscc.filter, sscc96Bytes, sscc96_filterPartition)
 	if err != nil {
 		return "", err
 	}
-	sscc96Bytes, err = utils.PutInt64InBytes(sscc.partition, sscc96Bytes, ssc96_partitionNumberPartition)
+	sscc96Bytes, err = utils.PutInt64InBytes(sscc.partition, sscc96Bytes, sscc96_partitionNumberPartition)
 	if err != nil {
 		return "", err
 	}
@@ -64,12 +65,12 @@ func (sscc SSCC96) ToHex() (string, error) {
 	return fmt.Sprintf("%X", sscc96Bytes), nil
 }
 
-func sscc69FromBytes(epcBytes []byte) (SSCC96, error) {
-	partitionNumber, err := utils.GetInt64FromBytes(epcBytes, ssc96_partitionNumberPartition)
+func sscc96FromBytes(epcBytes []byte) (SSCC96, error) {
+	partitionNumber, err := utils.GetInt64FromBytes(epcBytes, sscc96_partitionNumberPartition)
 	if err != nil {
 		return SSCC96{}, err
 	}
-	filter, err := utils.GetInt64FromBytes(epcBytes, ssc96_filterPartition)
+	filter, err := utils.GetInt64FromBytes(epcBytes, sscc96_filterPartition)
 	if err != nil {
 		return SSCC96{}, err
 	}

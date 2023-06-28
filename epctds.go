@@ -27,7 +27,9 @@ func ParseEpcTagData(hexString string) (EPCTag, error) {
 	}
 	switch header {
 	case SSCC96Header:
-		return sscc69FromBytes(epcBytes)
+		return sscc96FromBytes(epcBytes)
+	case SGLN96Header:
+		return sgln96FromBytes(epcBytes)
 	}
 
 	return nil, errors.Join(ErrInvalidHeader, fmt.Errorf("got header %x", header))
