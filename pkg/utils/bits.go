@@ -39,3 +39,28 @@ func GetInt64FromBytes(input []byte, partition partition.Partition) (int64, erro
 	return data, nil
 
 }
+
+func PutInt64InBytes(value int64, input []byte, partition partition.Partition) ([]byte, error) {
+	if (partition.Start+partition.Length)/8 > len(input) {
+		return nil, ErrInvalidLength
+	}
+	currentOffsetBit := partition.Start
+	remainingBits := partition.Length
+	for {
+		currentByte := currentOffsetBit / 8
+		bitsInCurrentByte := 8 - (currentOffsetBit % 8)
+		if remainingBits <= 0 {
+			break
+		} else if remainingBits < 8 {
+			shift := bitsInCurrentByte - remainingBits
+			input[currentByte] |= byte(value << shift)
+		} else {
+			shift := remainingBits - bitsInCurrentByte
+			input[currentByte] |= byte(value >> shift)
+		}
+		remainingBits = remainingBits - bitsInCurrentByte
+		currentOffsetBit = currentOffsetBit + bitsInCurrentByte
+
+	}
+	return input, nil
+}

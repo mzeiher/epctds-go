@@ -13,6 +13,7 @@ var ErrInvalidHeader = errors.New("invalid header value")
 type EPCTag interface {
 	ToTagURI() string
 	ToPureIdentityURI() string
+	ToHex() (string, error)
 }
 
 func ParseEpcTagData(hexString string) (EPCTag, error) {
@@ -25,8 +26,8 @@ func ParseEpcTagData(hexString string) (EPCTag, error) {
 		return nil, err
 	}
 	switch header {
-	case sscc96_header:
-		return sscc69FromByes(epcBytes)
+	case SSCC96Header:
+		return sscc69FromBytes(epcBytes)
 	}
 
 	return nil, errors.Join(ErrInvalidHeader, fmt.Errorf("got header %x", header))

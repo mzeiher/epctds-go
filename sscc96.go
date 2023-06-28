@@ -8,7 +8,11 @@ import (
 	"github.com/mzeiher/epctds-go/pkg/utils"
 )
 
-const sscc96_header = 0x31
+const SSCC96Header = 0x31
+
+var ssc96_headerPartition = partition.Partition{Start: 0, Length: 8, Digits: 5}
+var ssc96_partitionNumberPartition = partition.Partition{Start: 11, Length: 3, Digits: 3}
+var ssc96_filterPartition = partition.Partition{Start: 8, Length: 3, Digits: 3}
 
 var sscc96_partition = [7][2]partition.Partition{
 	{{Start: 14, Length: 40, Digits: 12}, {Start: 54, Length: 18, Digits: 5}},
@@ -35,13 +39,37 @@ func (sscc SSCC96) ToTagURI() string {
 func (sscc SSCC96) ToPureIdentityURI() string {
 	return fmt.Sprintf("urn:epc:id:sscc:%0*d.%0*d", sscc96_partition[sscc.partition][0].Digits, sscc.CompanyPrefix, sscc96_partition[sscc.partition][1].Digits, sscc.Serial)
 }
+func (sscc SSCC96) ToHex() (string, error) {
+	sscc96Bytes := make([]byte, 12)
+	sscc96Bytes, err := utils.PutInt64InBytes(SSCC96Header, sscc96Bytes, ssc96_headerPartition)
+	if err != nil {
+		return "", err
+	}
+	sscc96Bytes, err = utils.PutInt64InBytes(sscc.filter, sscc96Bytes, ssc96_filterPartition)
+	if err != nil {
+		return "", err
+	}
+	sscc96Bytes, err = utils.PutInt64InBytes(sscc.partition, sscc96Bytes, ssc96_partitionNumberPartition)
+	if err != nil {
+		return "", err
+	}
+	sscc96Bytes, err = utils.PutInt64InBytes(sscc.CompanyPrefix, sscc96Bytes, sscc96_partition[sscc.partition][0])
+	if err != nil {
+		return "", err
+	}
+	sscc96Bytes, err = utils.PutInt64InBytes(sscc.Serial, sscc96Bytes, sscc96_partition[sscc.partition][1])
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%X", sscc96Bytes), nil
+}
 
-func sscc69FromByes(epcBytes []byte) (SSCC96, error) {
-	partitionNumber, err := utils.GetInt64FromBytes(epcBytes, partition.Partition{Start: 11, Length: 3, Digits: 3})
+func sscc69FromBytes(epcBytes []byte) (SSCC96, error) {
+	partitionNumber, err := utils.GetInt64FromBytes(epcBytes, ssc96_partitionNumberPartition)
 	if err != nil {
 		return SSCC96{}, err
 	}
-	filter, err := utils.GetInt64FromBytes(epcBytes, partition.Partition{Start: 8, Length: 3, Digits: 3})
+	filter, err := utils.GetInt64FromBytes(epcBytes, ssc96_filterPartition)
 	if err != nil {
 		return SSCC96{}, err
 	}
